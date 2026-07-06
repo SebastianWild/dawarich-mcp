@@ -1,5 +1,9 @@
 # Dawarich MCP
 
+> **Disclaimer:** This project is a work in progress and was vibe-coded without
+> much of a plan. Treat it as experimental until the API surface and behavior
+> have been reviewed more deliberately.
+
 FastMCP server for Dawarich location history.
 
 The server exposes LLM-friendly tools and resources for maps, stats, places, visits, points, and trip workflows. Dawarich currently does not expose `/api/v1/trips`, so trip mutation tools return a clear unsupported-capability response until those routes exist.
