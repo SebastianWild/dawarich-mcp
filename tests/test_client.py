@@ -7,7 +7,7 @@ from dawarich_mcp.client import DawarichClient, DawarichClientError
 from dawarich_mcp.config import DawarichMcpConfig
 
 
-def make_client(handler, auth_mode="bearer"):
+def make_client(handler, auth_mode="bearer", host_header=None, forwarded_proto=None):
     transport = httpx.MockTransport(handler)
     http = httpx.AsyncClient(transport=transport)
     config = DawarichMcpConfig(
@@ -17,6 +17,8 @@ def make_client(handler, auth_mode="bearer"):
         timeout_seconds=30.0,
         max_page_size=500,
         audit_log=None,
+        host_header=host_header,
+        forwarded_proto=forwarded_proto,
     )
     return DawarichClient(config, http_client=http)
 
@@ -58,6 +60,31 @@ async def test_client_can_use_query_auth_for_compatibility():
 
     assert data == {"ok": True}
     assert seen["url"] == "https://dawarich.example.test/api/v1/stats?api_key=secret"
+
+
+@pytest.mark.asyncio
+async def test_client_sends_configured_forwarded_request_headers():
+    seen = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["host"] = request.headers.get("host")
+        seen["forwarded_proto"] = request.headers.get("x-forwarded-proto")
+        seen["authorization"] = request.headers.get("authorization")
+        return httpx.Response(200, json={"ok": True})
+
+    client = make_client(
+        handler,
+        host_header="timeline.example.test",
+        forwarded_proto="https",
+    )
+    data = await client.get("/api/v1/stats")
+
+    assert data == {"ok": True}
+    assert seen == {
+        "host": "timeline.example.test",
+        "forwarded_proto": "https",
+        "authorization": "Bearer secret",
+    }
 
 
 @pytest.mark.asyncio

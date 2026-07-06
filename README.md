@@ -18,6 +18,8 @@ Required:
 Optional:
 
 - `DAWARICH_AUTH_MODE`: `bearer` or `query`, default `bearer`
+- `DAWARICH_HOST_HEADER`: optional HTTP `Host` header for deployments that call an internal service URL while Dawarich only allows the public app host
+- `DAWARICH_FORWARDED_PROTO`: optional `X-Forwarded-Proto` header, for example `https` when Dawarich forces HTTPS behind a proxy
 - `DAWARICH_TIMEOUT_SECONDS`: default `30`
 - `DAWARICH_MAX_PAGE_SIZE`: default `500`
 - `MCP_TRANSPORT`: `stdio` or `http`, default `stdio` outside the container

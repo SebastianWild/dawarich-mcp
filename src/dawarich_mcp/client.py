@@ -244,6 +244,10 @@ class DawarichClient:
     ) -> httpx.Response:
         request_params = dict(params or {})
         headers: dict[str, str] = {"Accept": "application/json"}
+        if self.config.host_header:
+            headers["Host"] = self.config.host_header
+        if self.config.forwarded_proto:
+            headers["X-Forwarded-Proto"] = self.config.forwarded_proto
         if self.config.auth_mode == "query":
             request_params["api_key"] = self.config.api_key
         else:

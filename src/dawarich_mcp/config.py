@@ -12,6 +12,8 @@ class DawarichMcpConfig:
     timeout_seconds: float = 30.0
     max_page_size: int = 500
     audit_log: str | None = None
+    host_header: str | None = None
+    forwarded_proto: str | None = None
 
 
 def load_config() -> DawarichMcpConfig:
@@ -34,4 +36,6 @@ def load_config() -> DawarichMcpConfig:
         timeout_seconds=float(os.environ.get("DAWARICH_TIMEOUT_SECONDS", "30")),
         max_page_size=int(os.environ.get("DAWARICH_MAX_PAGE_SIZE", "500")),
         audit_log=os.environ.get("DAWARICH_AUDIT_LOG") or None,
+        host_header=os.environ.get("DAWARICH_HOST_HEADER") or None,
+        forwarded_proto=os.environ.get("DAWARICH_FORWARDED_PROTO") or None,
     )
