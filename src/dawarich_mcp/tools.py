@@ -51,6 +51,9 @@ class DawarichTools:
         ne_lat: float | None = None,
         ne_lng: float | None = None,
     ) -> dict[str, Any]:
+        if not start_at or not end_at:
+            raise ValueError("start_at and end_at are required")
+        _validate_range_order(start_at, end_at)
         if status != "any" and status not in SUPPORTED_VISIT_STATUSES:
             raise ValueError("status must be suggested, confirmed, declined, or any")
         bbox_selected = all(value is not None for value in (sw_lat, sw_lng, ne_lat, ne_lng))

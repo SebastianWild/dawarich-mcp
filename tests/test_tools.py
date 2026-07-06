@@ -19,6 +19,10 @@ class RecordingClient:
         self.calls.append(("create_visit", payload))
         return {"id": 7, "name": payload["name"], "status": payload["status"]}
 
+    async def list_visits(self, **params):
+        self.calls.append(("list_visits", params))
+        raise AssertionError("list_visits should not be called")
+
 
 @pytest.mark.asyncio
 async def test_delete_place_defaults_to_dry_run_and_does_not_mutate():
@@ -45,6 +49,20 @@ async def test_create_visit_validates_time_order_before_mutating():
             started_at="2026-01-02T12:00:00Z",
             ended_at="2026-01-02T11:00:00Z",
         )
+
+    assert client.calls == []
+
+
+@pytest.mark.asyncio
+async def test_find_visits_requires_complete_time_range_before_calling_dawarich():
+    client = RecordingClient()
+    tools = DawarichTools(client)
+
+    with pytest.raises(ValueError, match="start_at and end_at are required"):
+        await tools.find_visits()
+
+    with pytest.raises(ValueError, match="start_at and end_at are required"):
+        await tools.find_visits(start_at="2026-01-01T00:00:00Z")
 
     assert client.calls == []
 
